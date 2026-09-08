@@ -816,9 +816,9 @@ namespace MassageShop.API.Migrations
                             Id = 1,
                             CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@massageshop.com",
-                            FullName = "Admin",
+                            FullName = "Administrator",
                             IsActive = true,
-                            PasswordHash = "$2a$11$4n/2FyQASRibDV8kNuQXwePwHTJD6r/oko6vIjXNB0cFETaWssqPK",
+                            PasswordHash = "$2a$11$xMOY5sDtKfqRqUYeBTDuKOvMpiQ5R8RR.R/iSFpyWsGi1gkrRjlHi",
                             Phone = "0900000000",
                             RoleId = 1
                         });

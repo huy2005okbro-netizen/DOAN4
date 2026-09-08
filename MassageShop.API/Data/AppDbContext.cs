@@ -240,14 +240,15 @@ namespace MassageShop.API.Data
                 new Role { Id = 3, Name = "CUSTOMER" }
             );
 
-            // Seed Admin user (password: Admin@123)
-            var adminPasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123");
+            // Seed Admin user - password hash cho "Admin@123" được tạo sẵn (cố định)
+            // Hash này được tạo bởi BCrypt.HashPassword("Admin@123") với workfactor=11
+            const string adminPasswordHash = "$2a$11$xMOY5sDtKfqRqUYeBTDuKOvMpiQ5R8RR.R/iSFpyWsGi1gkrRjlHi";
 
             modelBuilder.Entity<User>().HasData(
                 new User
                 {
                     Id = 1,
-                    FullName = "Admin",
+                    FullName = "Administrator",
                     Email = "admin@massageshop.com",
                     Phone = "0900000000",
                     PasswordHash = adminPasswordHash,

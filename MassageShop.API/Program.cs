@@ -134,12 +134,11 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-// ===== Auto migrate + seed khi khởi động (Development) =====
-if (app.Environment.IsDevelopment())
+// ===== Seed database khi khởi động =====
+using (var scope = app.Services.CreateScope())
 {
-    using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.Migrate();
+    await DbSeeder.SeedAsync(db);
 }
 
 app.Run();
