@@ -8,6 +8,9 @@ namespace MassageShop.API.Models.DTOs.Order
         [Required]
         public OrderType OrderType { get; set; }
 
+        /// <summary>Chỉ dùng khi EMPLOYEE/ADMIN tạo đơn tại quầy cho khách</summary>
+        public int? CustomerId { get; set; }
+
         public List<CreateOrderItemDto> Items { get; set; } = new();
 
         public string? VoucherCode { get; set; }

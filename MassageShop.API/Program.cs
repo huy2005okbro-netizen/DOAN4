@@ -1,5 +1,9 @@
 using System.Text;
 using MassageShop.API.Data;
+using MassageShop.API.Helpers;
+using MassageShop.API.Interfaces;
+using MassageShop.API.Middleware;
+using MassageShop.API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -36,6 +40,28 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
+// ===== Helpers =====
+builder.Services.AddScoped<JwtHelper>();
+
+// ===== Services - DI =====
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+builder.Services.AddScoped<IServiceCategoryService, ServiceCategoryService>();
+builder.Services.AddScoped<IServicesService, ServicesService>();
+builder.Services.AddScoped<IRoomService, RoomService>();
+builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IInventoryService, InventoryService>();
+builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IShipmentService, ShipmentService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IInvoiceService, InvoiceService>();
+builder.Services.AddScoped<IPromotionService, PromotionService>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
+
 // ===== Controllers =====
 builder.Services.AddControllers();
 
@@ -50,7 +76,6 @@ builder.Services.AddSwaggerGen(options =>
         Description = "API cho hệ thống quản lý cửa hàng Massage kết hợp bán hàng"
     });
 
-    // Cấu hình Bearer Token cho Swagger
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -91,13 +116,15 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // ===== Middleware Pipeline =====
+app.UseMiddleware<ExceptionMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "MassageShop API v1");
-        c.RoutePrefix = string.Empty; // Swagger at root
+        c.RoutePrefix = string.Empty;
     });
 }
 
@@ -106,5 +133,13 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+// ===== Auto migrate + seed khi khởi động (Development) =====
+if (app.Environment.IsDevelopment())
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+}
 
 app.Run();
