@@ -1,0 +1,290 @@
+/* ===== CHỌN ĐỐI TƯỢNG ===== */
+.cdt-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    135deg,
+    #2c1810 0%,
+    #5a3e28 40%,
+    #8b6343 70%,
+    #c4956a 100%
+  );
+  position: relative;
+  overflow: hidden;
+  font-family: var(--font-family, "Segoe UI", sans-serif);
+}
+
+.cdt-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse at 20% 50%,
+      rgba(196, 149, 106, 0.25) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse at 80% 20%,
+      rgba(90, 62, 40, 0.4) 0%,
+      transparent 50%
+    );
+  pointer-events: none;
+}
+
+.cdt-bg-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: clamp(80px, 15vw, 180px);
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.04);
+  white-space: nowrap;
+  pointer-events: none;
+  letter-spacing: 0.1em;
+  user-select: none;
+}
+
+.cdt-lang {
+  position: absolute;
+  top: 24px;
+  right: 32px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+  font-weight: 500;
+}
+.cdt-lang span {
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.cdt-lang span:hover,
+.cdt-lang span.active {
+  color: #fff;
+}
+.cdt-lang-divider {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.cdt-wrapper {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 420px;
+  padding: 24px 16px 32px;
+}
+
+/* Logo */
+.cdt-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.cdt-logo-icon {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 8px;
+}
+.cdt-logo-name {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  color: #fff;
+  text-transform: uppercase;
+}
+.cdt-logo-tagline {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.65);
+  letter-spacing: 1px;
+  margin-top: 2px;
+}
+
+/* Hero text */
+.cdt-hero {
+  text-align: center;
+  margin: 20px 0 24px;
+}
+.cdt-hero-title {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 4px;
+}
+.cdt-hero-main {
+  font-size: 26px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.cdt-hero-sub {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.5;
+}
+
+/* Card */
+.cdt-card {
+  background: rgba(255, 255, 255, 0.97);
+  border-radius: 20px;
+  padding: 28px 24px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+.cdt-card-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #2c1810;
+  text-align: center;
+  margin-bottom: 4px;
+}
+.cdt-card-sub {
+  font-size: 12px;
+  color: #888;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Role buttons */
+.cdt-roles {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cdt-role-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+.cdt-role-btn::after {
+  content: "›";
+  position: absolute;
+  right: 16px;
+  font-size: 20px;
+  font-weight: 700;
+  opacity: 0.6;
+  transition: right 0.2s;
+}
+.cdt-role-btn:hover::after {
+  right: 12px;
+}
+.cdt-role-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+.cdt-role-btn:active {
+  transform: translateY(0);
+}
+
+.cdt-role-btn--admin {
+  background: #eef4ff;
+}
+.cdt-role-btn--admin:hover {
+  background: #e0ecff;
+}
+.cdt-role-btn--employee {
+  background: #eefaf3;
+}
+.cdt-role-btn--employee:hover {
+  background: #dcfaeb;
+}
+.cdt-role-btn--customer {
+  background: #fff4ee;
+}
+.cdt-role-btn--customer:hover {
+  background: #ffe8dc;
+}
+.cdt-role-btn--therapist {
+  background: #edfaf3;
+}
+.cdt-role-btn--therapist:hover {
+  background: #d6f5e5;
+}
+
+.cdt-role-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.cdt-role-btn--admin .cdt-role-icon {
+  background: #2563eb;
+}
+.cdt-role-btn--employee .cdt-role-icon {
+  background: #16a34a;
+}
+.cdt-role-btn--therapist .cdt-role-icon {
+  background: #0d9488;
+}
+.cdt-role-btn--customer .cdt-role-icon {
+  background: #ea580c;
+}
+
+.cdt-role-info {
+  flex: 1;
+}
+.cdt-role-name {
+  font-size: 15px;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 2px;
+}
+.cdt-role-btn--admin .cdt-role-name {
+  color: #1d4ed8;
+}
+.cdt-role-btn--employee .cdt-role-name {
+  color: #15803d;
+}
+.cdt-role-btn--therapist .cdt-role-name {
+  color: #0f766e;
+}
+.cdt-role-btn--customer .cdt-role-name {
+  color: #c2410c;
+}
+
+.cdt-role-desc {
+  font-size: 11.5px;
+  color: #666;
+}
+
+/* Footer tagline */
+.cdt-footer {
+  margin-top: 28px;
+  text-align: center;
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.45);
+  letter-spacing: 0.5px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 480px) {
+  .cdt-wrapper {
+    padding: 16px 12px 24px;
+  }
+  .cdt-hero-main {
+    font-size: 22px;
+  }
+  .cdt-card {
+    padding: 22px 18px;
+  }
+}

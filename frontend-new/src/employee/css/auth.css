@@ -1,0 +1,29 @@
+/* ===== AUTH EMPLOYEE (xanh lá) - import admin auth rồi override ===== */
+@import "../../admin/css/auth.css";
+
+.auth-avatar--employee {
+  background: linear-gradient(135deg, #15803d, #16a34a);
+  box-shadow: 0 4px 16px rgba(22, 163, 74, 0.3);
+}
+
+.auth-input:focus {
+  border-color: #16a34a;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.12);
+}
+.auth-remember input[type="checkbox"] {
+  accent-color: #16a34a;
+}
+.auth-forgot {
+  color: #16a34a;
+}
+.auth-forgot:hover {
+  color: #15803d;
+}
+
+.auth-submit--employee {
+  background: linear-gradient(135deg, #15803d, #16a34a);
+}
+.auth-submit--employee:hover {
+  background: linear-gradient(135deg, #166534, #15803d);
+  box-shadow: 0 4px 16px rgba(22, 163, 74, 0.4);
+}

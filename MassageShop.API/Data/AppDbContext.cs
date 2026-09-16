@@ -240,11 +240,17 @@ namespace MassageShop.API.Data
                 new Role { Id = 3, Name = "CUSTOMER" }
             );
 
-            // Seed Admin user - password hash cho "Admin@123" được tạo sẵn (cố định)
-            // Hash này được tạo bởi BCrypt.HashPassword("Admin@123") với workfactor=11
+            // Password hashes (BCrypt workfactor=11)
+            // Admin@123
             const string adminPasswordHash = "$2a$11$xMOY5sDtKfqRqUYeBTDuKOvMpiQ5R8RR.R/iSFpyWsGi1gkrRjlHi";
+            // Employee@123
+            const string employeePasswordHash = "$2a$11$wEfXF6uEp/zQzxQDxUXuj..nvAgfhJYL.DHYsqPjBOMb/y7Z2WhC.";
+            // Customer@123
+            const string customerPasswordHash = "$2a$11$cRKxiBLbNU/BaQ3j57WIEeM/GCFsBxMCYxfN.4SyMPvXsMoG05OXK";
 
+            // Seed Users
             modelBuilder.Entity<User>().HasData(
+                // Admin
                 new User
                 {
                     Id = 1,
@@ -254,6 +260,76 @@ namespace MassageShop.API.Data
                     PasswordHash = adminPasswordHash,
                     RoleId = 1,
                     IsActive = true,
+                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                },
+                // Nhân viên 1
+                new User
+                {
+                    Id = 2,
+                    FullName = "Nguyễn Thị Lan",
+                    Email = "nhanvien1@massageshop.com",
+                    Phone = "0911111111",
+                    PasswordHash = employeePasswordHash,
+                    RoleId = 2,
+                    IsActive = true,
+                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                },
+                // Nhân viên 2
+                new User
+                {
+                    Id = 3,
+                    FullName = "Trần Văn Minh",
+                    Email = "nhanvien2@massageshop.com",
+                    Phone = "0922222222",
+                    PasswordHash = employeePasswordHash,
+                    RoleId = 2,
+                    IsActive = true,
+                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                },
+                // Khách hàng mẫu
+                new User
+                {
+                    Id = 4,
+                    FullName = "Lê Thị Hoa",
+                    Email = "khachhang1@gmail.com",
+                    Phone = "0933333333",
+                    PasswordHash = customerPasswordHash,
+                    RoleId = 3,
+                    IsActive = true,
+                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                }
+            );
+
+            // Seed Employees
+            modelBuilder.Entity<Employee>().HasData(
+                new Employee
+                {
+                    Id = 1,
+                    UserId = 2,
+                    Position = "Kỹ thuật viên massage",
+                    StartDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    IsActive = true
+                },
+                new Employee
+                {
+                    Id = 2,
+                    UserId = 3,
+                    Position = "Kỹ thuật viên chăm sóc da",
+                    StartDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    IsActive = true
+                }
+            );
+
+            // Seed Customers
+            modelBuilder.Entity<Customer>().HasData(
+                new Customer
+                {
+                    Id = 1,
+                    UserId = 4,
+                    Address = "123 Đường Lê Lợi, Q.1, TP.HCM",
+                    DateOfBirth = new DateTime(1995, 6, 15, 0, 0, 0, DateTimeKind.Utc),
+                    Gender = "Nữ",
+                    LoyaltyPoints = 100,
                     CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 }
             );

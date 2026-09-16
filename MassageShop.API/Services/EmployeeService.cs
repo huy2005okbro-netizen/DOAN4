@@ -12,17 +12,18 @@ namespace MassageShop.API.Services
 
         public EmployeeService(AppDbContext db) => _db = db;
 
-        public async Task<List<EmployeeResponseDto>> GetAllAsync()
-        {
-            return await _db.Employees
-                .Include(e => e.User)
-                .Select(e => MapToDto(e))
-                .ToListAsync();
-        }
+        public async Task<List<EmployeeResponseDto>> GetAllAsync() =>
+            await _db.Employees.Include(e => e.User).Select(e => MapToDto(e)).ToListAsync();
 
         public async Task<EmployeeResponseDto?> GetByIdAsync(int id)
         {
             var e = await _db.Employees.Include(e => e.User).FirstOrDefaultAsync(e => e.Id == id);
+            return e == null ? null : MapToDto(e);
+        }
+
+        public async Task<EmployeeResponseDto?> GetByUserIdAsync(int userId)
+        {
+            var e = await _db.Employees.Include(e => e.User).FirstOrDefaultAsync(e => e.UserId == userId);
             return e == null ? null : MapToDto(e);
         }
 
@@ -63,7 +64,43 @@ namespace MassageShop.API.Services
         {
             var emp = await _db.Employees.Include(e => e.User).FirstOrDefaultAsync(e => e.Id == id);
             if (emp == null) return null;
+            return await ApplyUpdate(emp, dto);
+        }
 
+        public async Task<EmployeeResponseDto?> UpdateByUserIdAsync(int userId, EmployeeUpdateDto dto)
+        {
+            var emp = await _db.Employees.Include(e => e.User).FirstOrDefaultAsync(e => e.UserId == userId);
+            if (emp == null) return null;
+            return await ApplyUpdate(emp, dto);
+        }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var emp = await _db.Employees.Include(e => e.User).FirstOrDefaultAsync(e => e.Id == id);
+            if (emp == null) return false;
+
+            emp.IsActive = false;
+            emp.User.IsActive = false;
+            await _db.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> ChangePasswordAsync(int userId, string currentPassword, string newPassword)
+        {
+            var user = await _db.Users.FindAsync(userId);
+            if (user == null) return false;
+
+            if (!BCrypt.Net.BCrypt.Verify(currentPassword, user.PasswordHash))
+                throw new InvalidOperationException("Mật khẩu hiện tại không đúng");
+
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+            await _db.SaveChangesAsync();
+            return true;
+        }
+
+        // ===== Helpers =====
+        private async Task<EmployeeResponseDto> ApplyUpdate(Employee emp, EmployeeUpdateDto dto)
+        {
             if (dto.FullName != null) emp.User.FullName = dto.FullName;
             if (dto.Phone != null)
             {
@@ -77,17 +114,6 @@ namespace MassageShop.API.Services
 
             await _db.SaveChangesAsync();
             return MapToDto(emp);
-        }
-
-        public async Task<bool> DeleteAsync(int id)
-        {
-            var emp = await _db.Employees.Include(e => e.User).FirstOrDefaultAsync(e => e.Id == id);
-            if (emp == null) return false;
-
-            emp.IsActive = false;
-            emp.User.IsActive = false;
-            await _db.SaveChangesAsync();
-            return true;
         }
 
         private static EmployeeResponseDto MapToDto(Employee e) => new()

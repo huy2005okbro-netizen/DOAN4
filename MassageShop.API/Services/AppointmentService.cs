@@ -18,8 +18,36 @@ namespace MassageShop.API.Services
         public async Task<List<AppointmentResponseDto>> GetByCustomerIdAsync(int customerId) =>
             await QueryWithIncludes()
                 .Where(a => a.CustomerId == customerId)
+                .OrderByDescending(a => a.AppointmentDate).ThenBy(a => a.StartTime)
                 .Select(a => MapToDto(a))
                 .ToListAsync();
+
+        public async Task<List<AppointmentResponseDto>> GetByEmployeeIdAsync(int employeeId, AppointmentQueryParams? query = null)
+        {
+            var q = QueryWithIncludes().Where(a => a.EmployeeId == employeeId);
+
+            if (query != null)
+            {
+                if (!string.IsNullOrEmpty(query.Status) &&
+                    Enum.TryParse<AppointmentStatus>(query.Status, true, out var statusEnum))
+                    q = q.Where(a => a.Status == statusEnum);
+
+                if (query.Date.HasValue)
+                    q = q.Where(a => a.AppointmentDate.Date == query.Date.Value.Date);
+
+                if (query.FromDate.HasValue)
+                    q = q.Where(a => a.AppointmentDate.Date >= query.FromDate.Value.Date);
+
+                if (query.ToDate.HasValue)
+                    q = q.Where(a => a.AppointmentDate.Date <= query.ToDate.Value.Date);
+            }
+
+            return await q
+                .OrderByDescending(a => a.AppointmentDate)
+                .ThenBy(a => a.StartTime)
+                .Select(a => MapToDto(a))
+                .ToListAsync();
+        }
 
         public async Task<AppointmentResponseDto?> GetByIdAsync(int id)
         {
@@ -29,7 +57,6 @@ namespace MassageShop.API.Services
 
         public async Task<AppointmentResponseDto> CreateAsync(int customerId, AppointmentCreateDto dto)
         {
-            // Không đặt lịch trong quá khứ
             if (dto.AppointmentDate.Date < DateTime.UtcNow.Date)
                 throw new InvalidOperationException("Không thể đặt lịch trong quá khứ");
 
@@ -38,7 +65,6 @@ namespace MassageShop.API.Services
 
             var endTime = dto.StartTime.Add(TimeSpan.FromMinutes(service.Duration));
 
-            // Kiểm tra trùng lịch nhân viên
             if (dto.EmployeeId.HasValue)
             {
                 var empConflict = await _db.Appointments.AnyAsync(a =>
@@ -51,7 +77,6 @@ namespace MassageShop.API.Services
                     throw new InvalidOperationException("Nhân viên đã có lịch trong khoảng thời gian này");
             }
 
-            // Kiểm tra trùng lịch phòng
             if (dto.RoomId.HasValue)
             {
                 var roomConflict = await _db.Appointments.AnyAsync(a =>
@@ -112,7 +137,6 @@ namespace MassageShop.API.Services
 
             if (appointment == null) return false;
 
-            // Customer chỉ hủy lịch của chính mình
             if (requesterRole == "CUSTOMER" && appointment.Customer.UserId != requesterId)
                 throw new UnauthorizedAccessException("Không có quyền hủy lịch này");
 
@@ -120,6 +144,8 @@ namespace MassageShop.API.Services
             await _db.SaveChangesAsync();
             return true;
         }
+
+        // ===== Private helpers =====
 
         private IQueryable<Appointment> QueryWithIncludes() =>
             _db.Appointments

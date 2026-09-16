@@ -1,0 +1,29 @@
+/* ===== AUTH CUSTOMER (cam) - import admin auth rồi override ===== */
+@import "../../admin/css/auth.css";
+
+.auth-avatar--customer {
+  background: linear-gradient(135deg, #c2410c, #ea580c);
+  box-shadow: 0 4px 16px rgba(234, 88, 12, 0.3);
+}
+
+.auth-input:focus {
+  border-color: #ea580c;
+  box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.12);
+}
+.auth-remember input[type="checkbox"] {
+  accent-color: #ea580c;
+}
+.auth-forgot {
+  color: #ea580c;
+}
+.auth-forgot:hover {
+  color: #c2410c;
+}
+
+.auth-submit--customer {
+  background: linear-gradient(135deg, #c2410c, #ea580c);
+}
+.auth-submit--customer:hover {
+  background: linear-gradient(135deg, #9a3412, #c2410c);
+  box-shadow: 0 4px 16px rgba(234, 88, 12, 0.4);
+}

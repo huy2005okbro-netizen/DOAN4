@@ -13,7 +13,7 @@ export default function ProtectedRoute({ allowedRoles }: Props) {
   if (!user) return <Navigate to="/customer/dang-nhap" replace />;
 
   if (!allowedRoles.includes(user.role)) {
-    return <Navigate to="/forbidden" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return <Outlet />;
