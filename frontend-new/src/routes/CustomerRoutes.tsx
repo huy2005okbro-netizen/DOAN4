@@ -1,5 +1,4 @@
 import { Routes, Route } from "react-router-dom";
-import GuestRoute from "./GuestRoute";
 import ProtectedRoute from "./ProtectedRoute";
 import { ROLES } from "../shared/ts/constants/roles";
 import CustomerLayout from "../customer/tsx/layout/CustomerLayout";
@@ -11,18 +10,25 @@ import QuenMatKhauKhachHang from "../customer/tsx/auth/QuenMatKhauKhachHang";
 export default function CustomerRoutes() {
   return (
     <Routes>
-      {/* Auth pages (no layout) */}
-      <Route element={<GuestRoute />}>
-        <Route path="dang-nhap" element={<DangNhapKhachHang />} />
-        <Route path="dang-ky" element={<DangKyKhachHang />} />
-      </Route>
+      {/* Auth pages — không cần layout */}
+      <Route path="dang-nhap" element={<DangNhapKhachHang />} />
+      <Route path="dang-ky" element={<DangKyKhachHang />} />
       <Route path="quen-mat-khau" element={<QuenMatKhauKhachHang />} />
 
-      {/* Pages with layout */}
+      {/* Pages với layout */}
       <Route element={<CustomerLayout />}>
         <Route index element={<TrangChu />} />
-        <Route element={<ProtectedRoute allowedRoles={[ROLES.CUSTOMER]} />}>
-          {/* Protected routes thêm sau */}
+
+        {/* Protected customer routes */}
+        <Route
+          element={
+            <ProtectedRoute
+              allowedRoles={[ROLES.CUSTOMER]}
+              redirectTo="/customer/dang-nhap"
+            />
+          }
+        >
+          {/* Thêm route khác ở đây */}
         </Route>
       </Route>
     </Routes>

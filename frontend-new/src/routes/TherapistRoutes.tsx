@@ -18,7 +18,14 @@ export default function TherapistRoutes() {
     <Routes>
       <Route path="dang-nhap" element={<DangNhapKyThuatVien />} />
       <Route path="quen-mat-khau" element={<QuenMatKhauKyThuatVien />} />
-      <Route element={<ProtectedRoute allowedRoles={[ROLES.EMPLOYEE]} />}>
+      <Route
+        element={
+          <ProtectedRoute
+            allowedRoles={[ROLES.EMPLOYEE]}
+            redirectTo="/therapist/dang-nhap"
+          />
+        }
+      >
         <Route index element={<TongQuanKyThuatVien />} />
         <Route path="lich-lam-viec" element={<LichLamViecCuaToi />} />
         <Route path="lich-massage/:id" element={<ChiTietLichMassage />} />

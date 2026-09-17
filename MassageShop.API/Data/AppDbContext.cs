@@ -242,7 +242,7 @@ namespace MassageShop.API.Data
 
             // Password hashes (BCrypt workfactor=11)
             // Admin@123
-            const string adminPasswordHash = "$2a$11$xMOY5sDtKfqRqUYeBTDuKOvMpiQ5R8RR.R/iSFpyWsGi1gkrRjlHi";
+            const string adminPasswordHash = "$2a$11$Ydmgv.TKiTeIFj0M2M7slethYseqAA5wKUk08.qFdUwptqoyErqDy";
             // Employee@123
             const string employeePasswordHash = "$2a$11$wEfXF6uEp/zQzxQDxUXuj..nvAgfhJYL.DHYsqPjBOMb/y7Z2WhC.";
             // Customer@123

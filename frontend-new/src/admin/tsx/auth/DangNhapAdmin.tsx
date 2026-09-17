@@ -103,8 +103,9 @@ export default function DangNhapAdmin() {
     setLoading(true);
     try {
       const { data } = await api.post<AuthResponse>("/auth/login", form);
+      console.log("[Login] Response:", data); // debug
       if (data.role !== "ADMIN") {
-        setServerError("Tài khoản không có quyền Admin");
+        setServerError(`Tài khoản có role "${data.role}" không phải Admin`);
         return;
       }
       login(data.token, {
@@ -113,11 +114,16 @@ export default function DangNhapAdmin() {
         email: data.email,
         role: data.role,
       });
-      navigate("/admin", { replace: true });
+      // Dùng window.location thay navigate để force full redirect
+      window.location.href = "/admin";
     } catch (err: unknown) {
-      const e = err as { response?: { data?: { message?: string } } };
+      const e = err as {
+        response?: { data?: { message?: string }; status?: number };
+      };
+      console.error("[Login] Error:", e.response);
       setServerError(
-        e.response?.data?.message || "Đăng nhập thất bại. Vui lòng thử lại.",
+        e.response?.data?.message ||
+          `Lỗi ${e.response?.status ?? ""}: Đăng nhập thất bại. Kiểm tra email/mật khẩu.`,
       );
     } finally {
       setLoading(false);

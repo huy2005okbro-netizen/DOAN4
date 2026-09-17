@@ -11,7 +11,14 @@ export default function EmployeeRoutes() {
     <Routes>
       <Route path="dang-nhap" element={<DangNhapNhanVien />} />
       <Route path="quen-mat-khau" element={<QuenMatKhauNhanVien />} />
-      <Route element={<ProtectedRoute allowedRoles={[ROLES.EMPLOYEE]} />}>
+      <Route
+        element={
+          <ProtectedRoute
+            allowedRoles={[ROLES.EMPLOYEE]}
+            redirectTo="/employee/dang-nhap"
+          />
+        }
+      >
         <Route element={<EmployeeLayout />}>
           <Route index element={<TongQuanNhanVien />} />
         </Route>

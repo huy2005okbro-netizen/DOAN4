@@ -101,6 +101,31 @@ namespace MassageShop.API.Controllers
             return Ok(result);
         }
 
+        /// <summary>Doanh thu theo từng ngày trong khoảng thời gian</summary>
+        [HttpGet("revenue-by-day")]
+        public async Task<IActionResult> RevenueByDay(
+            [FromQuery] DateTime from,
+            [FromQuery] DateTime to)
+        {
+            var orders = await _db.Orders
+                .Where(o => o.CreatedAt.Date >= from.Date && o.CreatedAt.Date <= to.Date
+                         && o.Status == OrderStatus.COMPLETED)
+                .ToListAsync();
+
+            var result = new List<object>();
+            for (var d = from.Date; d <= to.Date; d = d.AddDays(1))
+            {
+                var dayOrders = orders.Where(o => o.CreatedAt.Date == d).ToList();
+                result.Add(new
+                {
+                    Date = d.ToString("yyyy-MM-dd"),
+                    Revenue = dayOrders.Sum(o => o.TotalAmount),
+                    OrderCount = dayOrders.Count
+                });
+            }
+            return Ok(result);
+        }
+
         /// <summary>Tổng quan hệ thống</summary>
         [HttpGet("overview")]
         public async Task<IActionResult> Overview()
@@ -118,6 +143,8 @@ namespace MassageShop.API.Controllers
                 .Where(o => o.CreatedAt >= today && o.Status == OrderStatus.COMPLETED)
                 .SumAsync(o => (decimal?)o.TotalAmount) ?? 0;
 
+            var todayAppointments = await _db.Appointments
+                .CountAsync(a => a.AppointmentDate.Date == today);
             var pendingAppointments = await _db.Appointments
                 .CountAsync(a => a.Status == AppointmentStatus.PENDING);
             var pendingOrders = await _db.Orders
@@ -131,6 +158,7 @@ namespace MassageShop.API.Controllers
                 TotalServices = totalServices,
                 TodayOrders = todayOrders,
                 TodayRevenue = todayRevenue,
+                TodayAppointments = todayAppointments,
                 PendingAppointments = pendingAppointments,
                 PendingOrders = pendingOrders
             });

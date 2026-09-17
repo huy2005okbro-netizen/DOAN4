@@ -1,8 +1,23 @@
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useAuth } from "../ts/hooks/useAuth";
 import "../css/chon-doi-tuong.css";
 
 export default function ChonDoiTuong() {
   const navigate = useNavigate();
+  const { user, isLoading } = useAuth();
+
+  // Đã đăng nhập → redirect về đúng dashboard
+  useEffect(() => {
+    if (!isLoading && user) {
+      const role = user.role.toUpperCase();
+      if (role === "ADMIN") navigate("/admin", { replace: true });
+      else if (role === "EMPLOYEE") navigate("/employee", { replace: true });
+      else if (role === "CUSTOMER") navigate("/customer", { replace: true });
+    }
+  }, [user, isLoading, navigate]);
+
+  if (isLoading) return null;
 
   return (
     <div className="cdt-page">
