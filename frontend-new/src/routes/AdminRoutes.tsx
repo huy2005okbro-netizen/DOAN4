@@ -6,6 +6,7 @@ import TongQuanAdmin from "../admin/tsx/dashboard/TongQuanAdmin";
 import DangNhapAdmin from "../admin/tsx/auth/DangNhapAdmin";
 import QuenMatKhauAdmin from "../admin/tsx/auth/QuenMatKhauAdmin";
 import DanhSachTaiKhoan from "../admin/tsx/tai-khoan/DanhSachTaiKhoan";
+import DanhSachKhachHang from "../admin/tsx/khach-hang/DanhSachKhachHang";
 
 export default function AdminRoutes() {
   return (
@@ -24,6 +25,7 @@ export default function AdminRoutes() {
           <Route index element={<TongQuanAdmin />} />
           <Route path="tong-quan" element={<TongQuanAdmin />} />
           <Route path="tai-khoan" element={<DanhSachTaiKhoan />} />
+          <Route path="khach-hang" element={<DanhSachKhachHang />} />
         </Route>
       </Route>
       <Route path="*" element={<Navigate to="/admin/dang-nhap" replace />} />

@@ -103,6 +103,7 @@ interface NavItem {
   path: string;
   badge?: number;
   section?: string;
+  children?: { label: string; path: string }[];
 }
 
 const NAV_ITEMS: NavItem[] = [
@@ -115,8 +116,18 @@ const NAV_ITEMS: NavItem[] = [
   {
     section: "QUẢN LÝ",
     icon: <Users size={16} />,
-    label: "Khách hàng",
+    label: "Quản lý tài khoản",
+    path: "/admin/tai-khoan",
+  },
+  {
+    icon: <Users size={16} />,
+      label: "Quản lý khách hàng",
     path: "/admin/khach-hang",
+    children: [
+      { label: "Danh sách khách hàng", path: "/admin/khach-hang" },
+      { label: "Lịch sử đặt lịch", path: "/admin/khach-hang?view=appointments" },
+      { label: "Lịch sử mua hàng", path: "/admin/khach-hang?view=orders" },
+    ],
   },
   {
     icon: <UserCheck size={16} />,
@@ -189,6 +200,9 @@ export default function AdminLayout() {
   const location = useLocation();
   const { user, logout } = useAuth();
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [expandedMenu, setExpandedMenu] = useState<string | null>(
+    location.pathname.startsWith("/admin/khach-hang") ? "/admin/khach-hang" : null,
+  );
 
   const isActive = (path: string) => {
     if (path === "/admin") return location.pathname === "/admin";
@@ -222,14 +236,34 @@ export default function AdminLayout() {
               )}
               <button
                 className={`sidebar-item${isActive(item.path) ? " active" : ""}`}
-                onClick={() => navigate(item.path)}
+                onClick={() => {
+                  if (item.children) {
+                    setExpandedMenu((current) => current === item.path ? null : item.path);
+                  } else {
+                    navigate(item.path);
+                  }
+                }}
               >
                 <span className="sidebar-item-icon">{item.icon}</span>
                 <span>{item.label}</span>
+                {item.children && <ChevronDown className={`sidebar-item-chevron${expandedMenu === item.path ? " expanded" : ""}`} size={14} />}
                 {item.badge ? (
                   <span className="sidebar-item-badge">{item.badge}</span>
                 ) : null}
               </button>
+              {item.children && expandedMenu === item.path && (
+                <div className="sidebar-submenu">
+                  {item.children.map((child) => (
+                    <button
+                      key={child.label}
+                      className={`sidebar-submenu-item${location.pathname === child.path.split("?")[0] && !child.path.includes("?") ? " active" : ""}`}
+                      onClick={() => navigate(child.path)}
+                    >
+                      <span />{child.label}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           ))}
         </nav>

@@ -67,6 +67,107 @@ const posLabel: Record<string, string> = {
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50];
 
+type AccountFilters = {
+  search: string;
+  role: string;
+  status: string;
+  fromDate: string;
+  toDate: string;
+  gender: string;
+};
+
+function AccountFilterPanel({
+  initialFilters,
+  onApply,
+  onClose,
+}: {
+  initialFilters: AccountFilters;
+  onApply: (filters: AccountFilters) => void;
+  onClose: () => void;
+}) {
+  const [filters, setFilters] = useState(initialFilters);
+  const set = (key: keyof AccountFilters) =>
+    (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
+      setFilters((current) => ({ ...current, [key]: event.target.value }));
+
+  const reset = () =>
+    setFilters({
+      search: "",
+      role: "",
+      status: "",
+      fromDate: "",
+      toDate: "",
+      gender: "",
+    });
+
+  return (
+    <div className="tk-filter-overlay" onClick={onClose}>
+      <section
+        className="tk-filter-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Bộ lọc tài khoản"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="tk-filter-panel-header">
+          <div><Filter size={20} /> <span>Bộ lọc tài khoản</span></div>
+          <button onClick={onClose} aria-label="Đóng bộ lọc"><X size={18} /></button>
+        </div>
+
+        <label className="tk-filter-field">
+          <span>Từ khóa</span>
+          <div className="tk-filter-search">
+            <Search size={15} />
+            <input value={filters.search} onChange={set("search")} placeholder="Tìm theo tên, email, số điện thoại..." />
+          </div>
+        </label>
+
+        <label className="tk-filter-field">
+          <span>Vai trò</span>
+          <select value={filters.role} onChange={set("role")}>
+            <option value="">Tất cả vai trò</option>
+            <option value="ADMIN">Quản trị viên</option>
+            <option value="EMPLOYEE">Nhân viên</option>
+            <option value="CUSTOMER">Khách hàng</option>
+          </select>
+        </label>
+
+        <label className="tk-filter-field">
+          <span>Trạng thái</span>
+          <select value={filters.status} onChange={set("status")}>
+            <option value="">Tất cả trạng thái</option>
+            <option value="active">Hoạt động</option>
+            <option value="locked">Đã khóa</option>
+          </select>
+        </label>
+
+        <div className="tk-filter-field">
+          <span>Ngày tạo</span>
+          <div className="tk-filter-date-row">
+            <label><Calendar size={14} /><input type="date" value={filters.fromDate} onChange={set("fromDate")} aria-label="Từ ngày" /></label>
+            <label><Calendar size={14} /><input type="date" value={filters.toDate} onChange={set("toDate")} aria-label="Đến ngày" /></label>
+          </div>
+        </div>
+
+        <label className="tk-filter-field">
+          <span>Giới tính (tùy chọn)</span>
+          <select value={filters.gender} onChange={set("gender")}>
+            <option value="">Tất cả</option>
+            <option value="Nam">Nam</option>
+            <option value="Nữ">Nữ</option>
+            <option value="Khác">Khác</option>
+          </select>
+        </label>
+
+        <div className="tk-filter-panel-actions">
+          <button className="tk-btn tk-btn--outline" onClick={reset}><RefreshCw size={15} /> Đặt lại</button>
+          <button className="tk-btn tk-btn--primary" onClick={() => onApply(filters)}><Filter size={15} /> Áp dụng</button>
+        </div>
+      </section>
+    </div>
+  );
+}
+
 // ===== Confirm Modal =====
 function ConfirmModal({
   type,
@@ -644,6 +745,9 @@ export default function DanhSachTaiKhoan() {
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+  const [genderFilter, setGenderFilter] = useState("");
 
   // Pagination
   const [page, setPage] = useState(1);
@@ -663,6 +767,8 @@ export default function DanhSachTaiKhoan() {
     mode: "create-employee" | "create-customer" | "edit";
     account?: AccountDto;
   } | null>(null);
+  const [showCreateMenu, setShowCreateMenu] = useState(false);
+  const [showFilterPanel, setShowFilterPanel] = useState(false);
   const [toastMsg, setToastMsg] = useState("");
 
   const showToast = (msg: string) => {
@@ -693,6 +799,15 @@ export default function DanhSachTaiKhoan() {
     if (roleFilter) list = list.filter((a) => a.role === roleFilter);
     if (statusFilter === "active") list = list.filter((a) => a.isActive);
     if (statusFilter === "locked") list = list.filter((a) => !a.isActive);
+    if (genderFilter) list = list.filter((a) => a.gender === genderFilter);
+    if (fromDate) {
+      const from = new Date(`${fromDate}T00:00:00`);
+      list = list.filter((a) => new Date(a.createdAt) >= from);
+    }
+    if (toDate) {
+      const to = new Date(`${toDate}T23:59:59.999`);
+      list = list.filter((a) => new Date(a.createdAt) <= to);
+    }
     if (search.trim()) {
       const s = search.toLowerCase();
       list = list.filter(
@@ -703,7 +818,18 @@ export default function DanhSachTaiKhoan() {
       );
     }
     return list;
-  }, [accounts, roleFilter, statusFilter, search]);
+  }, [accounts, roleFilter, statusFilter, search, fromDate, toDate, genderFilter]);
+
+  const applyFilters = (filters: AccountFilters) => {
+    setSearch(filters.search);
+    setRoleFilter(filters.role);
+    setStatusFilter(filters.status);
+    setFromDate(filters.fromDate);
+    setToDate(filters.toDate);
+    setGenderFilter(filters.gender);
+    setPage(1);
+    setShowFilterPanel(false);
+  };
 
   const totalPages = Math.ceil(filtered.length / pageSize);
   const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
@@ -785,28 +911,33 @@ export default function DanhSachTaiKhoan() {
             và khóa/mở khóa tài khoản.
           </p>
         </div>
-        <div style={{ display: "flex", gap: 8 }}>
-          <div style={{ position: "relative" }}>
-            <button
-              className="tk-btn tk-btn--outline"
-              style={{ paddingRight: 32 }}
-            >
-              <Plus size={14} /> Thêm tài khoản ▾
-            </button>
-            {/* Dropdown — simple hover trick via sibling */}
-          </div>
+        <div style={{ position: "relative" }}>
           <button
             className="tk-btn tk-btn--primary"
-            onClick={() => setModal({ mode: "create-employee" })}
+            onClick={() => setShowCreateMenu((visible) => !visible)}
           >
-            <Plus size={14} /> Thêm nhân viên
+            <Plus size={16} /> Thêm tài khoản
           </button>
-          <button
-            className="tk-btn tk-btn--outline"
-            onClick={() => setModal({ mode: "create-customer" })}
-          >
-            <Plus size={14} /> Thêm khách hàng
-          </button>
+          {showCreateMenu && (
+            <div className="tk-create-menu">
+              <button
+                onClick={() => {
+                  setShowCreateMenu(false);
+                  setModal({ mode: "create-employee" });
+                }}
+              >
+                <UserCheck size={15} /> Thêm nhân viên
+              </button>
+              <button
+                onClick={() => {
+                  setShowCreateMenu(false);
+                  setModal({ mode: "create-customer" });
+                }}
+              >
+                <UserCircle size={15} /> Thêm khách hàng
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -893,7 +1024,7 @@ export default function DanhSachTaiKhoan() {
           <button className="tk-btn tk-btn--outline" onClick={loadData}>
             <RefreshCw size={13} /> Làm mới
           </button>
-          <button className="tk-btn tk-btn--outline">
+          <button className="tk-btn tk-btn--outline" onClick={() => setShowFilterPanel(true)}>
             <Filter size={13} /> Lọc
           </button>
         </div>
@@ -1141,6 +1272,13 @@ export default function DanhSachTaiKhoan() {
           account={modal.account}
           onClose={() => setModal(null)}
           onSaved={handleSaved}
+        />
+      )}
+      {showFilterPanel && (
+        <AccountFilterPanel
+          initialFilters={{ search, role: roleFilter, status: statusFilter, fromDate, toDate, gender: genderFilter }}
+          onApply={applyFilters}
+          onClose={() => setShowFilterPanel(false)}
         />
       )}
     </div>
