@@ -81,6 +81,7 @@ namespace MassageShop.API.Services
             if (dto.Address != null) customer.Address = dto.Address;
             if (dto.DateOfBirth.HasValue) customer.DateOfBirth = dto.DateOfBirth;
             if (dto.Gender != null) customer.Gender = dto.Gender;
+            if (dto.IsActive.HasValue) customer.User.IsActive = dto.IsActive.Value;
 
             await _db.SaveChangesAsync();
             return MapToDto(customer);

@@ -10,5 +10,6 @@ namespace MassageShop.API.Models.DTOs.Employee
         public string? Position { get; set; }
         public DateTime StartDate { get; set; }
         public bool IsActive { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }

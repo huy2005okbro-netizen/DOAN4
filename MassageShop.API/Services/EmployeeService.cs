@@ -125,7 +125,8 @@ namespace MassageShop.API.Services
             Phone = e.User.Phone,
             Position = e.Position,
             StartDate = e.StartDate,
-            IsActive = e.IsActive
+            IsActive = e.IsActive,
+            CreatedAt = e.User.CreatedAt
         };
     }
 }

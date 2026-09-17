@@ -17,5 +17,7 @@ namespace MassageShop.API.Models.DTOs.Customer
 
         [MaxLength(10)]
         public string? Gender { get; set; }
+
+        public bool? IsActive { get; set; }
     }
 }
