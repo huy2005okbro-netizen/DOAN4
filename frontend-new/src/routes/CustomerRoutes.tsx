@@ -15,21 +15,8 @@ export default function CustomerRoutes() {
       <Route path="dang-ky" element={<DangKyKhachHang />} />
       <Route path="quen-mat-khau" element={<QuenMatKhauKhachHang />} />
 
-      {/* Pages với layout */}
-      <Route element={<CustomerLayout />}>
-        <Route index element={<TrangChu />} />
-
-        {/* Protected customer routes */}
-        <Route
-          element={
-            <ProtectedRoute
-              allowedRoles={[ROLES.CUSTOMER]}
-              redirectTo="/customer/dang-nhap"
-            />
-          }
-        >
-          {/* Thêm route khác ở đây */}
-        </Route>
+      <Route element={<ProtectedRoute allowedRoles={[ROLES.CUSTOMER]} redirectTo="/customer/dang-nhap" />}>
+        <Route element={<CustomerLayout />}><Route index element={<TrangChu />} /></Route>
       </Route>
     </Routes>
   );

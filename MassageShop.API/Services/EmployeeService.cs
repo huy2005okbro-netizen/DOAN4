@@ -110,7 +110,11 @@ namespace MassageShop.API.Services
             }
             if (dto.Position != null) emp.Position = dto.Position;
             if (dto.StartDate.HasValue) emp.StartDate = dto.StartDate.Value;
-            if (dto.IsActive.HasValue) emp.IsActive = dto.IsActive.Value;
+            if (dto.IsActive.HasValue)
+            {
+                emp.IsActive = dto.IsActive.Value;
+                emp.User.IsActive = dto.IsActive.Value;
+            }
 
             await _db.SaveChangesAsync();
             return MapToDto(emp);

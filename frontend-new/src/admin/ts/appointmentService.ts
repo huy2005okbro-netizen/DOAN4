@@ -35,3 +35,6 @@ export const getAllAppointments = (params?: {
   date?: string;
 }) =>
   api.get<AppointmentDto[]>("/appointments", { params }).then((r) => r.data);
+
+export const updateAppointmentStatus = (id: number, status: AppointmentStatus) =>
+  api.patch<AppointmentDto>(`/appointments/${id}/status`, { status }).then((r) => r.data);

@@ -30,6 +30,9 @@ namespace MassageShop.API.Data
         public DbSet<Promotion> Promotions => Set<Promotion>();
         public DbSet<Voucher> Vouchers => Set<Voucher>();
         public DbSet<Review> Reviews => Set<Review>();
+        public DbSet<WorkShift> WorkShifts => Set<WorkShift>();
+        public DbSet<Attendance> Attendances => Set<Attendance>();
+        public DbSet<AttendanceMonthlySummary> AttendanceMonthlySummaries => Set<AttendanceMonthlySummary>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -80,6 +83,19 @@ namespace MassageShop.API.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             // ===== Appointment =====
+            // Attendance: tránh multiple cascade paths Employee -> WorkShift -> Attendance
+            modelBuilder.Entity<Attendance>()
+                .HasOne(a => a.Employee)
+                .WithMany()
+                .HasForeignKey(a => a.EmployeeId)
+                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Attendance>()
+                .HasOne(a => a.WorkShift)
+                .WithMany()
+                .HasForeignKey(a => a.WorkShiftId)
+                .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<AttendanceMonthlySummary>().HasIndex(x => new { x.EmployeeId, x.Year, x.Month }).IsUnique();
+
             modelBuilder.Entity<Appointment>()
                 .HasOne(a => a.Customer)
                 .WithMany(c => c.Appointments)

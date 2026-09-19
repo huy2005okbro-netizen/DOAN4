@@ -78,7 +78,7 @@ const LotusIcon = () => (
 
 export default function DangNhapKhachHang() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, logout } = useAuth();
 
   const [form, setForm] = useState<LoginRequest>({ email: "", password: "" });
   const [showPwd, setShowPwd] = useState(false);
@@ -134,7 +134,7 @@ export default function DangNhapKhachHang() {
       />
       <div className="auth-container">
         <div style={{ position: "relative", width: "100%", maxWidth: 400 }}>
-          <button className="auth-back" onClick={() => navigate("/")}>
+          <button className="auth-back" onClick={() => { logout(); navigate("/", { replace: true }); }}>
             <svg
               width="16"
               height="16"

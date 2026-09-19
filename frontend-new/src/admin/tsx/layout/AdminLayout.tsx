@@ -125,14 +125,20 @@ const NAV_ITEMS: NavItem[] = [
     path: "/admin/khach-hang",
     children: [
       { label: "Danh sách khách hàng", path: "/admin/khach-hang" },
-      { label: "Lịch sử đặt lịch", path: "/admin/khach-hang?view=appointments" },
-      { label: "Lịch sử mua hàng", path: "/admin/khach-hang?view=orders" },
+      { label: "Lịch sử đặt lịch", path: "/admin/khach-hang/lich-su-dat-lich" },
+      { label: "Lịch sử mua hàng", path: "/admin/khach-hang/lich-su-mua-hang" },
     ],
   },
   {
     icon: <UserCheck size={16} />,
-    label: "Nhân viên",
+    label: "Quản lý nhân viên",
     path: "/admin/nhan-vien",
+    children: [
+      { label: "Danh sách nhân viên", path: "/admin/nhan-vien" },
+      { label: "Phân ca làm việc", path: "/admin/nhan-vien/phan-ca" },
+      { label: "Lịch sử công tác", path: "/admin/nhan-vien/lich-su-cong-tac" },
+      { label: "Quản lý chấm công", path: "/admin/nhan-vien/cham-cong" },
+    ],
   },
   {
     section: "DỊCH VỤ",
@@ -201,7 +207,7 @@ export default function AdminLayout() {
   const { user, logout } = useAuth();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [expandedMenu, setExpandedMenu] = useState<string | null>(
-    location.pathname.startsWith("/admin/khach-hang") ? "/admin/khach-hang" : null,
+    location.pathname.startsWith("/admin/khach-hang") ? "/admin/khach-hang" : location.pathname.startsWith("/admin/nhan-vien") ? "/admin/nhan-vien" : null,
   );
 
   const isActive = (path: string) => {

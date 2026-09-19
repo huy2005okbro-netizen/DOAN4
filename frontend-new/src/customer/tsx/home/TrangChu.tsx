@@ -1,7 +1,4 @@
-export default function TrangChu() {
-  return (
-    <div style={{ padding: "2rem" }}>
-      <h1>Trang chủ</h1>
-    </div>
-  );
-}
+import { CalendarDays, Heart, ShoppingBag, Sparkles } from "lucide-react";
+import { Link } from "react-router-dom";
+import "../../css/home.css";
+export default function TrangChu(){return <div className="customer-home"><section className="customer-hero"><div><p className="customer-kicker"><Sparkles size={16}/> Massage Spa cao cấp</p><h1>Thư giãn cơ thể,<br/><em>tái tạo năng lượng</em></h1><p>Đặt lịch massage dễ dàng và tận hưởng những phút giây chăm sóc trọn vẹn dành riêng cho bạn.</p><div><Link className="customer-primary" to="/customer/dich-vu"><CalendarDays/> Đặt lịch ngay</Link><Link className="customer-secondary" to="/customer/san-pham"><ShoppingBag/> Xem sản phẩm</Link></div></div><div className="customer-hero-art"><Heart/><span>Wellness<br/>for you</span></div></section><section className="customer-benefits"><article><CalendarDays/><h3>Đặt lịch linh hoạt</h3><p>Chọn dịch vụ, thời gian và kỹ thuật viên phù hợp.</p></article><article><Sparkles/><h3>Dịch vụ chuyên nghiệp</h3><p>Không gian thư giãn cùng đội ngũ tận tâm.</p></article><article><Heart/><h3>Ưu đãi thành viên</h3><p>Tích điểm và nhận nhiều quyền lợi hấp dẫn.</p></article></section></div>}

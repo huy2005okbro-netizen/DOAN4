@@ -170,6 +170,52 @@ namespace MassageShop.API.Data
                 );
                 await db.SaveChangesAsync();
             }
+
+            // ===== Seed WorkShift + Attendance: dữ liệu thật cho các màn hình phân ca/chấm công =====
+            // Chỉ bổ sung đúng 5 ca mẫu nếu hệ thống chưa có ca nào; không xóa hoặc ghi đè lịch sử.
+            if (!await db.WorkShifts.AnyAsync())
+            {
+                var employees = await db.Employees.Where(e => e.IsActive).OrderBy(e => e.Id).Take(2).ToListAsync();
+                if (employees.Count > 0)
+                {
+                    var today = DateTime.UtcNow.Date;
+                    var shifts = Enumerable.Range(0, 5).Select(i => new WorkShift
+                    {
+                        EmployeeId = employees[i % employees.Count].Id,
+                        WorkDate = today.AddDays(-i),
+                        ShiftType = i % 2 == 0 ? "MORNING" : "AFTERNOON",
+                        StartTime = i % 2 == 0 ? new TimeSpan(8, 0, 0) : new TimeSpan(14, 0, 0),
+                        EndTime = i % 2 == 0 ? new TimeSpan(14, 0, 0) : new TimeSpan(20, 0, 0),
+                        Status = "WORKING",
+                        Note = "Dữ liệu mẫu chấm công"
+                    }).ToList();
+                    db.WorkShifts.AddRange(shifts);
+                    await db.SaveChangesAsync();
+
+                    if (!await db.Attendances.AnyAsync())
+                    {
+                        foreach (var shift in shifts)
+                        {
+                            var late = shift.Id % 3 == 0 ? 7 : 0;
+                            var checkIn = shift.WorkDate.Add(shift.StartTime).AddMinutes(late);
+                            var checkOut = shift.WorkDate.Add(shift.EndTime);
+                            db.Attendances.Add(new Attendance
+                            {
+                                EmployeeId = shift.EmployeeId,
+                                WorkShiftId = shift.Id,
+                                CheckInAt = checkIn,
+                                CheckOutAt = checkOut,
+                                WorkedMinutes = (int)(checkOut - checkIn).TotalMinutes,
+                                LateMinutes = late,
+                                EarlyLeaveMinutes = 0,
+                                Status = late > 0 ? "LATE" : "COMPLETED",
+                                ManualNote = "Dữ liệu mẫu khởi tạo"
+                            });
+                        }
+                        await db.SaveChangesAsync();
+                    }
+                }
+            }
         }
     }
 }

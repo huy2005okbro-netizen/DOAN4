@@ -74,6 +74,120 @@ namespace MassageShop.API.Migrations
                     b.ToTable("Appointments");
                 });
 
+            modelBuilder.Entity("MassageShop.API.Models.Entities.Attendance", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("CheckInAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("CheckOutAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("EarlyLeaveMinutes")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LateMinutes")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ManualNote")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("WorkShiftId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WorkedMinutes")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("WorkShiftId");
+
+                    b.ToTable("Attendances");
+                });
+
+            modelBuilder.Entity("MassageShop.API.Models.Entities.AttendanceMonthlySummary", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AbsentCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AssignedShiftCount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ClosedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ClosedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EarlyLeaveCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EarlyLeaveMinutes")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LateCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LateMinutes")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LeaveCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Month")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OvertimeMinutes")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int>("WorkedDayCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WorkedMinutes")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId", "Year", "Month")
+                        .IsUnique();
+
+                    b.ToTable("AttendanceMonthlySummaries");
+                });
+
             modelBuilder.Entity("MassageShop.API.Models.Entities.Cart", b =>
                 {
                     b.Property<int>("Id")
@@ -922,6 +1036,55 @@ namespace MassageShop.API.Migrations
                     b.ToTable("Vouchers");
                 });
 
+            modelBuilder.Entity("MassageShop.API.Models.Entities.WorkShift", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("time");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int?>("RoomId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ShiftType")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<DateTime>("WorkDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("RoomId");
+
+                    b.ToTable("WorkShifts");
+                });
+
             modelBuilder.Entity("MassageShop.API.Models.Entities.Appointment", b =>
                 {
                     b.HasOne("MassageShop.API.Models.Entities.Customer", "Customer")
@@ -953,6 +1116,36 @@ namespace MassageShop.API.Migrations
                     b.Navigation("Room");
 
                     b.Navigation("Service");
+                });
+
+            modelBuilder.Entity("MassageShop.API.Models.Entities.Attendance", b =>
+                {
+                    b.HasOne("MassageShop.API.Models.Entities.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MassageShop.API.Models.Entities.WorkShift", "WorkShift")
+                        .WithMany()
+                        .HasForeignKey("WorkShiftId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+
+                    b.Navigation("WorkShift");
+                });
+
+            modelBuilder.Entity("MassageShop.API.Models.Entities.AttendanceMonthlySummary", b =>
+                {
+                    b.HasOne("MassageShop.API.Models.Entities.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("MassageShop.API.Models.Entities.Cart", b =>
@@ -1155,6 +1348,23 @@ namespace MassageShop.API.Migrations
                         .IsRequired();
 
                     b.Navigation("Promotion");
+                });
+
+            modelBuilder.Entity("MassageShop.API.Models.Entities.WorkShift", b =>
+                {
+                    b.HasOne("MassageShop.API.Models.Entities.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MassageShop.API.Models.Entities.Room", "Room")
+                        .WithMany()
+                        .HasForeignKey("RoomId");
+
+                    b.Navigation("Employee");
+
+                    b.Navigation("Room");
                 });
 
             modelBuilder.Entity("MassageShop.API.Models.Entities.Cart", b =>
